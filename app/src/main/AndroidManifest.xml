@@ -11,11 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Words"
         tools:ignore="AllowBackup">
-        <activity
-            android:name="com.AyaMayssa.words.DetailActivity"
-            android:exported="false"
-            android:parentActivityName="com.AyaMayssa.words.MainActivity" />
-        <activity
+      <activity
             android:name="com.AyaMayssa.words.MainActivity"
             android:exported="true">
             <intent-filter>

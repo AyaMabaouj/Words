@@ -1,43 +1,40 @@
 package com.AyaMayssa.words.adapter
 
-import android.content.Intent
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Button
+import androidx.annotation.RequiresApi
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.AyaMayssa.words.DetailActivity
+import com.AyaMayssa.words.LetterListFragmentDirections
 import com.AyaMayssa.words.MainActivity
 import com.AyaMayssa.words.R
 
-/**
- * Adapter for the [RecyclerView] in [MainActivity].
- */
+
 class LetterAdapter :
     RecyclerView.Adapter<LetterAdapter.LetterViewHolder>() {
 
-    // Generates a [CharRange] from 'A' to 'Z' and converts it to a list
+
     private val list = ('A').rangeTo('Z').toList()
 
-    /**
-     * Provides a reference for the views needed to display items in your list.
-     */
+
     class LetterViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val button: Button = view.findViewById(R.id.button_item)
+        val button = view.findViewById<Button>(R.id.button_item)
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    /**
-     * Creates new views with R.layout.item_view as its template
-     */
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LetterViewHolder {
         val layout = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.item_view, parent, false)
+
         // Setup custom accessibility delegate to set the text read
         layout.accessibilityDelegate = Accessibility
         return LetterViewHolder(layout)
@@ -47,24 +44,26 @@ class LetterAdapter :
      * Replaces the content of an existing view with new data
      */
     override fun onBindViewHolder(holder: LetterViewHolder, position: Int) {
-        val item = list[position]
+        val item = list.get(position)
         holder.button.text = item.toString()
-        holder.button.setOnClickListener {
-            val context = holder.view.context
-            val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra(DetailActivity.LETTER, holder.button.text.toString())
-            context.startActivity(intent)
 
+        // Assigns a [OnClickListener] to the button contained in the [ViewHolder]
+        holder.button.setOnClickListener {
+            // Create an action from WordList to DetailList
+            // using the required arguments
+            val action = LetterListFragmentDirections.actionLetterListFragmentToWordListFragment(letter = holder.button.text.toString())
+            // Navigate using that action
+            holder.view.findNavController().navigate(action)
         }
     }
 
     // Setup custom accessibility delegate to set the text read with
     // an accessibility service
     companion object Accessibility : View.AccessibilityDelegate() {
-
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onInitializeAccessibilityNodeInfo(
             host: View?,
-            info: AccessibilityNodeInfo?,
+            info: AccessibilityNodeInfo?
         ) {
             super.onInitializeAccessibilityNodeInfo(host, info)
             // With `null` as the second argument to [AccessibilityAction], the
@@ -80,4 +79,5 @@ class LetterAdapter :
             info?.addAction(customClick)
         }
     }
+
 }
